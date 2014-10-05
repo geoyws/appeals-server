@@ -1,0 +1,25 @@
+{
+  "name": "appeals-server",
+  "version": "1.0.0",
+  "description": "Server-side for appeals prototype.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/geoyws/appeals-server.git"
+  },
+  "author": "geoyws",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/geoyws/appeals-server/issues"
+  },
+  "homepage": "https://github.com/geoyws/appeals-server",
+  "dependencies": {
+    "express": "^4.9.4",
+    "mongoose": "^3.8.16",
+    "passport": "^0.2.1",
+    "passport-google": "^0.3.0"
+  }
+}
