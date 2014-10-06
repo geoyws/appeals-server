@@ -32,11 +32,11 @@ var api = {
 	del: function () { // DANGER: deletes all users, only available to admins, must go through a password auth, used for server cleaning
 	    
 	}, 
-	user: { // :uid
+	uid: { // user id
 	    get: function () { // fetches the profile of the user
 	    
 	    },
-	    post: function () { // creating a new user
+	    post: function () { // NOT IN USE, reserved
 	    
 	    },
 	    put: function () { // amending user profile
@@ -56,7 +56,7 @@ var api = {
 		    
 		    }
 		},
-		conversation: { // :cid
+		cid: { // conversation id
 		    get: function () { // fetches individual conversation
 		    
 		    },
@@ -95,6 +95,20 @@ var api = {
 		del: function () { // clear watchlist, requiring confirmation
 		
 		}
+	    },
+	    lists: {
+		get: function () { // get the lists that the user currently has
+		    
+		},
+		post: function () { // add a new list, either by starting a new one, or copying another list, depending on the JSON argument
+
+		},
+		put: function () { // amend a list, add appeals and remove appeals from a list, and change the arrangement of a list
+		    // different types of JSON arguments here: add appeal, remove appeal, choose arrangement, etc
+		},
+		del: function () { // delete a list, or a selection of lists, no looping but one http request to complete multiple deletions
+		    
+		}
 	    }
 	}
     },
@@ -130,7 +144,7 @@ var api = {
 		
 	    }
 	},
-	'/:aid': { // appeals id
+	aid: { // appeals id
 	    get: function () { // getting the single appeal by id
 		
 	    },
@@ -144,53 +158,69 @@ var api = {
 		
 	    }
 	},
-	'/nearby': {
+	nearby: {
 	    get: function () { // get according to the location of the requesting user
 	    
 	    }
 	},
-	'/:searchString': { // search string could be a string or could be an id, dynamic searching supporting multiple searches within one string and different sorting
-	    get: function () {
-	    
-	    }
-	}	
+	search: {
+	    searchString: { // search string could be a string or could be an id, dynamic searching supporting multiple searches within one string and different sorting
+		get: function () {
+		
+		}
+	    }	
+	}
     }
 };
 
-// Route Mapping Initialization
+// Route Map
 var routeMap = {
     '/users': {
 	get: api.users.get, // for getting a basic list of users, which is only for admins
-	post: api.users.post,
-	put: api.users.put,
-	del: api.users.del,
+	post: api.users.post, // admin use, batch adding users, and for the system to add new users
+	put: api.users.put, // admin use, batch editing users
+	del: api.users.del, // admin use, batch deleting users, JSON arguments
 	'/:uid': {
-	    get: api.users.user.profile, // for getting all profile info
-	    post: api.users.user.post,
-	    put: api.users.user.put,
-	    del: api.users.user.del, // for deleting the user profile, use with caution and layer with security
+	    get: api.users.uid.get, // for getting all profile info
+	    post: api.users.uid.post, // NOT IN USE, reserved
+	    put: api.users.uid.put, // editing user profile
+	    del: api.users.uid.del, // for deleting the user profile, use with caution and layer with security
 	    '/conversations': {
-		'/archived': {
-		    get: api.conversations.archived.list // get all headers of archived conversations, we will not allow the server to fetch all conversations, learn pagination
-		},
 		'/active': {
-		    get: api.conversations.active.list // get all headers of active conversations
+		    get: api.users.uid.conversations.active.get // get all headers of active conversations
+		},
+		'/archived': {
+		    get: api.users.uid.conversations.archived.get // get all headers of archived conversations, we will not allow the server to fetch all conversations, learn pagination
 		},
 		'/:cid' { // conversation id
-		    get: api.conversations.cid.get // get the latest 50 messages, this is different from push systems
-		    post: api.conversations.cid.post // post a message to the conversation, with token auth and checks if the poster is a valid participant, rez archived conversation
-		    put: api.conversations.cid.put // edits and deletes posts, add and remove participants, change conversation options
-		    del: api.conversations.cid.del // archives the conversation and it no longer is active
+		    get: api.users.user.conversations.cid.get, // get the latest 50 messages, this is different from push systems
+		    post: api.users.user.conversations.cid.post, // post a msg to conversation, with token auth, checks if poster is valid participant, resurrect archived conversation
+		    put: api.users.user.conversations.cid.put, // edits and deletes posts, add and remove participants, change conversation options
+		    del: api.users.user.conversations.cid.del, // archives the conversation and it no longer is active
 		},
 		'/start': {
-		    post: api.conversations.start.post
+		    post: api.users.user.conversations.start.post
 		}
+	    },
+	    '/watchlist': {
+		get: api.users.user.watchlist.get,
+		post: api.users.user.watchlist.post,
+		put: api.users.user.watchlist.put,
+		del: api.users.user.watchlist.del
+	    },
+	    '/lists': {
+		get: api.users.user.lists.get,
+		post: api.users.user.lists.post,
+		put: api.users.user.lists.put,
+		del: api.users.user.lists.del
 	    }
 	}
     },
     '/appeals': {
-	'/:searchString': {
-	    get: api.appeals.search
+	'/search': {
+	    '/:searchString': {
+		get: api.appeals.search.searchString.get
+	    }
 	}
     }
 };
