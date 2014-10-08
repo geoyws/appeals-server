@@ -211,44 +211,83 @@ app.map({
 	post: api.e.eid.u.post, // admin use, batch adding users, and for the system to add new users
 	put: api.e.eid.u.put, // admin use, batch editing users
 	delete: api.e.eid.users.delete, // admin use, batch deleting users, JSON arguments
+	'/s': { // search
+	  '/:ss': { // search string
+	    get: api.e.eid.u.s.ss.get // searches users
+	  }
+	},
 	'/:uid': { // user IDs
 	    get: api.e.eid.u.uid.get, // for getting all profile info
 	    post: api.e.eid.u.uid.post, // NOT IN USE, reserved
 	    put: api.e.eid.u.uid.put, // editing user profile
 	    delete: api.e.eid.u.uid.delete, // for deleting the user profile, use with caution and layer with security
 	    '/c': { // conversations
-		get: api.e.eid.u.uid.get, // for getting all conversations, active and archived are only denoted by the conversation's property in the db
-		post: api.e.eid.u.uid.post, // for starting a new conversation
-		put: api.e.eid.u.uid.put, // for editing conversations in bulk, whatever it may be
-		delete: api.e.eid.u.uid.delete // for deleting conversations in bulk, two step auth
+		get: api.e.eid.u.uid.c.get, // for getting all conversations, active and archived are only denoted by the conversation's property in the db
+		post: api.e.eid.u.uid.c.post, // for starting a new conversation
+		put: api.e.eid.u.uid.c.put, // for editing conversations in bulk, whatever it may be
+		delete: api.e.eid.u.uid.c.delete // for deleting conversations in bulk, two step auth
+		'/s': { // search
+		  '/:ss': { // search string
+		    get: api.e.eid.u.uid.c.s.ss.get // search for conversations
+		  }
+		},
 		'/:cid': { // conversation id
-		    get: api.users.uid.conversations.cid.get, // get the latest 50 messages, this is different from push systems
-		    post: api.users.uid.conversations.cid.post, // post a msg to conversation, with token auth, checks if poster is valid participant, resurrect archived conversation
-		    put: api.users.uid.conversations.cid.put, // edits and deletes posts, add and remove participants, change conversation options
-		    delete: api.users.uid.conversations.cid.delete, // archives the conversation and it no longer is active
+		    get: api.e.eid.u.uid.c.cid.get, // get the latest 50 messages, this is different from push systems
+		    post: api.e.eid.u.uid.c.cid.post, // post a msg to conversation, with token auth, checks if poster is valid participant, resurrect archived conversation
+		    put: api.e.eid.u.uid.c.cid.put, // edits and deletes posts, add and remove participants, change conversation options
+		    delete: api.e.eid.u.uid.c.cid.delete, // archives the conversation and it no longer is active
+		    '/s': { // search
+		      '/:ss': { // search string
+			get: api.e.eid.u.uid.c.cid.s.ss.get // search within the conversation, for as old as the conversation may be, this is important because people want to be able to search up old convos with officials
+			// what is returned from the search will be timestamps and message numbers to give an idea of when and how fast the conversation was occuring.
+			// each message has a message id that will iterate based on the order of position (msgid), '1' indicating the first message, '2', the second and so on.
+			// say the JSON returned has the timestamp of 23438123 in UNIX epoch time, and a msgid of 2425, that means... it is the 2425th message in the convo.
+		      }
+		    },
 		}
 	    },
-	    '/w': { // watchlists
-		get: api.users.uid.watchlist.get,
-		post: api.users.uid.watchlist.post,
-		put: api.users.uid.watchlist.put,
-		delete: api.users.uid.watchlist.delete
+	    '/a': { // appeals
+		'/s': { // search
+		    '/:ss': { // search string
+			get: api.e.eid.u.uid.a.s.ss.get // search for appeals
+		    }
+		}
 	    },
-	    '/l': { // lists
-		get: api.users.uid.lists.get,
-		post: api.users.uid.lists.post,
-		put: api.users.uid.lists.put,
-		delete: api.users.uid.lists.delete
+	    '/w': { // watchlists, users can only have 1 watchlist
+		get: api.e.eid.u.uid.w.get, // fetches a JSON of appeals and metadata
+		post: api.e.eid.u.uid.w.post,
+		put: api.e.eid.u.uid.w.put,
+		delete: api.e.eid.u.uid.w.delete,
+		'/s': {
+		  '/:ss': {
+		    get: api.e.eid.u.uid.w.s.ss.get // searches for appeals within the watchlist by keywords: location, username, status etc, do first and mature it later, experience is important
+		  }
+		},
+	    },
+	    '/l': { // lists, users can have many lists
+		get: api.e.eid.u.uid.l.get, // get all lists
+		post: api.e.eid.u.uid.l.post,
+		put: api.e.eid.u.uid.l.put,
+		delete: api.e.eid.u.uid.l.delete,
+		'/s': {
+		  '/:ss': {
+		    get: api.e.eid.u.uid.l.s.ss.get // searches for lists within the users collection of lists by keywords: location, username, status etc, do first and mature it later, experience is important
+		  }
+		},
+		'/lid': {
+		  get: api.e.eid.u.uid.l.lid.get, // gets a specific list's appeals, all items shall be paginated
+		  post: api.e.eid.u.uid.l.lid.post,
+		  put: api.e.eid.u.uid.l.lid.put,
+		  delete: api.e.eid.u.uid.l.lid.delete
+		  '/s': {
+		    '/:ss': {
+		      get: api.e.eid.u.uid.l.lid.s.ss.get // searches for appeals within the list by keywords: location, username, status etc, do first and mature it later, experience is important
+		    }
+		  },
+		}
 	    }
 	}
     },
-    '/appeals': {
-	'/search': {
-	    '/:searchString': {
-		get: api.appeals.search.searchString.get
-	    }
-	}
-    }
 });
 
 var server = app.listen(3000, function () {
@@ -256,3 +295,5 @@ var server = app.listen(3000, function () {
 });
 
 //module.exports.api = api;
+
+// Remember to make the application immune to DDoS attacks. Make sure there are request limits per minute for each user. No more than 1000 requests per minute for example. Otherwise, report the user at /logs/violations.txt.
