@@ -81,6 +81,14 @@ var api = {
       /*
       includes a JSON body that has a { "participants": "uid30495, uid204932, uid9192, uid39482" }
       all validation is done via this api layer and not on the database layer, so the data sent must be pure.
+      all APIs listed here will also list out their respective request body models
+      just test mongoose first before passport.js
+      after passport.js, you can start completing the APIs
+      after completing the APIs, you can start doing the UI
+      after doing the UI, you are ready to demo your workable appeals.io
+      you should secure the funds to purchase the domain and host the api
+      and use heroku as a starting point to the rest of the scalability concerns
+      let them handle the best practices because they've been at it for years
       */
       console.log("POST /api/c " + "\n" + req.body); 
       /*
@@ -89,7 +97,7 @@ var api = {
 	
       }
       */
-      var userId = "23a942b034398"; // we will use this for now
+      var userId = "23a942b034398"; // we will use this for now. It is supposed to be fetched from passport.js
       var userLocation = req.body.geo; // for example
       var newMsgCollection = new (models.c.mc.model)({
 	// message collection gets created first, so that the ObjectId can be passed in to newConversation
