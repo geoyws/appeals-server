@@ -1,3 +1,5 @@
+// appeals.io uses UTF-8 encoding only.
+
 var app = require("express")();
 var mongoose = require("mongoose");
 var routes = require("./routes");

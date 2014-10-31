@@ -131,3 +131,5 @@ app.listen(1337, function () {
 });
 
 // Remember to make the application immune to DDoS attacks. Make sure there are request limits per minute for each user. No more than 1000 requests per minute for example. Otherwise, report the user at /logs/violations.txt.
+
+console.log(api);

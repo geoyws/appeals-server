@@ -17,9 +17,11 @@
   },
   "homepage": "https://github.com/geoyws/appeals-server",
   "dependencies": {
+    "bluebird": "^2.3.5",
     "body-parser": "^1.9.0",
     "express": "^4.9.4",
     "mongoose": "^3.8.16",
+    "node-inspector": "^0.7.4",
     "passport": "^0.2.1",
     "passport-google": "^0.3.0"
   }

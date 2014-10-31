@@ -1,22 +1,35 @@
 var mongoose = require("mongoose");
 var schemas = require("../schemas");
-var Model = mongoose.model;
+var Promise = require("bluebird");
 
-var m = { // models
+console.log(schemas);
+
+var models = {
   c: {
     model: function () {
-      return Model("c", schemas.c.schema());
-    },
+      var c = mongoose.model("c", schemas.c.schema());
+      Promise.promisifyAll(c);
+      Promise.promisifyAll(c.prototype);
+      return c;
+    }(),
     mc: {
       model: function () {
-	return Model("c.mc", schemas.c.mc.schema());
-      },
+	var mc = mongoose.model("c.mc", schemas.c.mc.schema());
+	Promise.promisifyAll(mc);
+	Promise.promisifyAll(mc.prototype);
+	return mc;
+      }(),
       m: {
 	model: function () {
-	  return Model("c.mc.m", schemas.c.mc.m.schema();
+	  var m = mongoose.model("c.mc.m", schemas.c.mc.m.schema());
+	  Promise.promisifyAll(m);
+	  Promise.promisifyAll(m.prototype);
+	  return m;
+	}()
       }
     }
   }
 };
 
-m = module.exports;
+exports = module.exports = models;
+
